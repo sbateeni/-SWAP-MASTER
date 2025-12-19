@@ -29,7 +29,8 @@ const Tile: React.FC<TileProps> = ({
   const row = Math.floor(tile.originalIndex / gridSize);
   const col = tile.originalIndex % gridSize;
   
-  // حساب موقع الخلفية بدقة
+  // حساب موقع الخلفية بدقة (0-100%)
+  // نستخدم (gridSize - 1) لأننا نوزع 100% على عدد الفجوات بين القطع
   const bgPosX = gridSize > 1 ? (col / (gridSize - 1)) * 100 : 0;
   const bgPosY = gridSize > 1 ? (row / (gridSize - 1)) * 100 : 0;
 
@@ -37,27 +38,28 @@ const Tile: React.FC<TileProps> = ({
     <div
       data-tile-index={index}
       onPointerDown={(e) => !disabled && onPointerDown(index, e)}
-      className={`relative select-none transition-all duration-300 ease-out flex items-center justify-center ${
+      className={`relative select-none transition-all duration-300 ease-out flex items-center justify-center bg-slate-800 ${
         isCorrect 
-          ? 'z-0 p-0 border-0 rounded-none' 
-          : 'z-10 p-[2px]' 
+          ? 'z-0 p-0 border-0' 
+          : 'z-10 p-[1px]' 
       }`}
       style={{ touchAction: 'none' }}
     >
       <div
-        className={`w-full h-full transition-all duration-500 overflow-hidden shadow-sm ${
+        className={`w-full h-full transition-all duration-500 overflow-hidden shadow-sm bg-slate-800 ${
           isDragging 
-            ? 'opacity-20 grayscale scale-90' 
+            ? 'opacity-20 grayscale scale-95' 
             : isTarget 
-              ? 'ring-4 ring-indigo-500 ring-inset z-20 brightness-125' 
+              ? 'ring-4 ring-indigo-500 ring-inset z-20 brightness-110' 
               : isCorrect 
-                ? 'shadow-none border-transparent' 
-                : 'rounded-md border-2 border-slate-800/80 hover:border-indigo-500/50 hover:shadow-lg'
+                ? 'shadow-none' 
+                : 'rounded-sm border border-white/5 hover:border-indigo-500/50'
         }`}
         style={{
-          backgroundImage: `url(${imageUrl})`,
+          backgroundImage: `url('${imageUrl}')`,
           backgroundSize: `${gridSize * 100}%`,
           backgroundPosition: `${bgPosX}% ${bgPosY}%`,
+          backgroundRepeat: 'no-repeat'
         }}
       >
         {isTarget && (
