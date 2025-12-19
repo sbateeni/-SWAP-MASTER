@@ -1,7 +1,7 @@
 
 import React, { useState, useRef } from 'react';
-import { TileData } from '../types';
-import Tile from './Tile';
+import { TileData } from '../types.ts';
+import Tile from './Tile.tsx';
 
 interface PuzzleBoardProps {
   tiles: TileData[];
@@ -78,7 +78,7 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({
         gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
         width: 'min(90vw, 500px)',
         height: 'min(90vw, 500px)',
-        gap: '0px' // إزالة الفجوات للسماح بالالتحام
+        gap: '0px'
       }}
     >
       {tiles.map((tile, index) => (

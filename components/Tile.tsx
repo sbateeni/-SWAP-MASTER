@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TileData } from '../types';
+import { TileData } from '../types.ts';
 
 interface TileProps {
   index: number;
@@ -40,7 +40,7 @@ const Tile: React.FC<TileProps> = ({
       className={`relative select-none transition-all duration-300 ease-out flex items-center justify-center ${
         isCorrect 
           ? 'z-0 p-0 border-0 rounded-none' 
-          : 'z-10 p-[2px]' // إضافة مساحة حول القطعة غير الصحيحة لتبدو كقطعة لغز
+          : 'z-10 p-[2px]' 
       }`}
       style={{ touchAction: 'none' }}
     >

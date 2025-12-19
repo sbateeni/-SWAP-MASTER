@@ -1,13 +1,12 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { LEVELS } from './constants';
-import { GameState, TileData, View } from './types';
-import { shuffleTiles, checkWin, calculateStars } from './utils/helpers';
-import { saveProgress, getCompletedLevels, getLastPlayedLevel, saveLastPlayedLevel } from './utils/db';
-import PuzzleBoard from './components/PuzzleBoard';
-import WinModal from './components/WinModal';
-import LevelSelector from './components/LevelSelector';
-import Fireworks from './components/Fireworks';
+import { LEVELS } from './constants.ts';
+import { GameState, TileData } from './types.ts';
+import { shuffleTiles, checkWin } from './utils/helpers.ts';
+import { saveProgress, getCompletedLevels, getLastPlayedLevel, saveLastPlayedLevel } from './utils/db.ts';
+import PuzzleBoard from './components/PuzzleBoard.tsx';
+import LevelSelector from './components/LevelSelector.tsx';
+import Fireworks from './components/Fireworks.tsx';
 
 const App: React.FC = () => {
   const [gameState, setGameState] = useState<GameState>({
@@ -24,21 +23,32 @@ const App: React.FC = () => {
   const [showHint, setShowHint] = useState(false);
   const timerRef = useRef<number | null>(null);
 
-  const level = LEVELS[gameState.currentLevelIdx];
+  // تأمين الوصول للمستوى الحالي
+  const level = LEVELS[gameState.currentLevelIdx] || LEVELS[0];
 
   useEffect(() => {
     const loadProgress = async () => {
+      // مؤقت أمان: لو تأخرت قاعدة البيانات لأكثر من ثانيتين، اظهر اللعبة على أي حال
+      const safetyTimeout = setTimeout(() => {
+        setIsLoaded(true);
+      }, 2000);
+
       try {
         const completed = await getCompletedLevels();
         const lastPlayed = await getLastPlayedLevel();
+        
+        // التأكد من أن الفهرس ضمن نطاق مصفوفة المستويات
+        const safeLastPlayed = (lastPlayed >= 0 && lastPlayed < LEVELS.length) ? lastPlayed : 0;
+
         setGameState(prev => ({ 
           ...prev, 
           unlockedLevels: completed,
-          currentLevelIdx: lastPlayed
+          currentLevelIdx: safeLastPlayed
         }));
       } catch (err) {
         console.error("Failed to load progress:", err);
       } finally {
+        clearTimeout(safetyTimeout);
         setIsLoaded(true);
       }
     };
@@ -46,7 +56,7 @@ const App: React.FC = () => {
   }, []);
 
   const startLevel = useCallback(async (levelIdx: number) => {
-    const targetLevel = LEVELS[levelIdx];
+    const targetLevel = LEVELS[levelIdx] || LEVELS[0];
     setGameState(prev => ({
       ...prev,
       currentLevelIdx: levelIdx,
@@ -121,8 +131,9 @@ const App: React.FC = () => {
   }, [gameState.currentLevelIdx, startLevel]);
 
   if (!isLoaded) return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-      <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
+      <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
+      <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Loading Game Data...</p>
     </div>
   );
 
@@ -255,9 +266,6 @@ const App: React.FC = () => {
               <span>NEXT LEVEL</span>
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
             </button>
-            <div className="mt-4 text-center">
-              <span className="text-slate-500 font-black uppercase text-xs tracking-widest">Excellent Work!</span>
-            </div>
           </div>
         ) : (
           <div className="flex gap-4 w-full justify-center max-w-[420px]">
