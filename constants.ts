@@ -35,7 +35,7 @@ const generateLevels = (): LevelConfig[] => {
     const levelId = i + 1;
     let gridSize = 3;
     let difficulty = Difficulty.EASY;
-    let showNumbers = true;
+    let showNumbers = false; // تعطيل الأرقام افتراضياً لجميع المستويات
     let timeLimit: number | undefined = undefined;
     let moveLimit: number | undefined = undefined;
 
@@ -43,34 +43,28 @@ const generateLevels = (): LevelConfig[] => {
     if (levelId <= 20) {
       gridSize = 3;
       difficulty = Difficulty.EASY;
-      showNumbers = true;
     } else if (levelId <= 50) {
       gridSize = 4;
       difficulty = Difficulty.MEDIUM;
-      showNumbers = false;
       if (levelId > 40) moveLimit = 40;
     } else if (levelId <= 80) {
       gridSize = 5;
       difficulty = Difficulty.HARD;
-      showNumbers = false;
       timeLimit = 300; // 5 mins
       moveLimit = 80;
     } else if (levelId <= 110) {
       gridSize = 6;
       difficulty = Difficulty.EXPERT;
-      showNumbers = false;
       timeLimit = 480; // 8 mins
       moveLimit = 150;
     } else if (levelId <= 140) {
       gridSize = 8;
       difficulty = Difficulty.MASTER;
-      showNumbers = false;
       timeLimit = 600; // 10 mins
       moveLimit = 300;
     } else {
       gridSize = 10;
       difficulty = Difficulty.LEGENDARY;
-      showNumbers = false;
       timeLimit = 900; // 15 mins
       moveLimit = 500;
     }

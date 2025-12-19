@@ -60,12 +60,6 @@ const Tile: React.FC<TileProps> = ({
           backgroundPosition: `${bgPosX}% ${bgPosY}%`,
         }}
       >
-        {showNumbers && !isCorrect && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/20 text-white font-black text-lg pointer-events-none">
-            {tile.originalIndex + 1}
-          </div>
-        )}
-        
         {isTarget && (
           <div className="absolute inset-0 bg-indigo-500/20 animate-pulse pointer-events-none" />
         )}
