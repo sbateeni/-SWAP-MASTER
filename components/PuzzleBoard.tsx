@@ -40,7 +40,6 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({
 
     setPointerPos({ x: e.clientX, y: e.clientY });
 
-    // تحديد المربع المستهدف تحت الإصبع
     const element = document.elementFromPoint(e.clientX, e.clientY);
     const tileElement = element?.closest('[data-tile-index]');
     
@@ -81,7 +80,7 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({
         gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
         width: 'min(94vw, 85vh, 700px)',
         height: 'min(94vw, 85vh, 700px)',
-        gap: '2px' // فجوة بسيطة بين القطع تجعلها أكثر وضوحاً
+        gap: '2px'
       }}
     >
       {tiles.map((tile, index) => (
@@ -99,7 +98,6 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({
         />
       ))}
 
-      {/* قطعة السحب الطائرة (Ghost Tile) */}
       {draggedIdx !== null && (
         <div 
           className="fixed pointer-events-none z-50 overflow-hidden border-4 border-indigo-400 shadow-[0_40px_80px_rgba(0,0,0,0.9)] scale-110 rounded-2xl"
@@ -108,7 +106,7 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({
             top: pointerPos.y - tileSize / 2,
             width: `${tileSize}px`,
             height: `${tileSize}px`,
-            backgroundImage: `url(${imageUrl})`,
+            backgroundImage: `url("${imageUrl}")`,
             backgroundSize: `${gridSize * 100}% ${gridSize * 100}%`,
             backgroundPosition: `${(tiles[draggedIdx].originalIndex % gridSize / (gridSize - 1)) * 100}% ${(Math.floor(tiles[draggedIdx].originalIndex / gridSize) / (gridSize - 1)) * 100}%`,
           }}

@@ -26,16 +26,9 @@ const Tile: React.FC<TileProps> = ({
   onPointerDown
 }) => {
   const isCorrect = tile.originalIndex === index;
-  
-  // حساب الموقع الأصلي للقطعة في الشبكة (0,0) (1,0) إلخ
   const row = Math.floor(tile.originalIndex / gridSize);
   const col = tile.originalIndex % gridSize;
   
-  /**
-   * حساب موضع الخلفية بالنسبة المئوية:
-   * القاعدة هي: (الموقع / (عدد الأعمدة - 1)) * 100
-   * هذا يضمن أن الصورة تغطي المساحة بالكامل ويتم قص الجزء الصحيح بدقة
-   */
   const percentX = gridSize > 1 ? (col / (gridSize - 1)) * 100 : 0;
   const percentY = gridSize > 1 ? (row / (gridSize - 1)) * 100 : 0;
 
@@ -56,18 +49,16 @@ const Tile: React.FC<TileProps> = ({
           isTarget ? 'ring-4 ring-indigo-500 ring-inset z-20 brightness-125 scale-95' : ''
         } ${isCorrect ? '' : 'border-[0.5px] border-white/10'}`}
         style={{
-          backgroundImage: `url(${imageUrl})`,
+          backgroundImage: `url("${imageUrl}")`,
           backgroundSize: `${gridSize * 100}% ${gridSize * 100}%`,
           backgroundPosition: `${percentX}% ${percentY}%`,
           backgroundRepeat: 'no-repeat'
         }}
       >
-        {/* تأثير النبض عند التحديد */}
         {isTarget && (
           <div className="absolute inset-0 bg-indigo-500/10 animate-pulse" />
         )}
         
-        {/* أرقام توضيحية اختيارية */}
         {showNumbers && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/20 text-white font-bold text-lg drop-shadow-md">
             {tile.originalIndex + 1}

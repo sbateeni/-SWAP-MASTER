@@ -47,17 +47,27 @@ const App: React.FC = () => {
     loadProgress();
   }, []);
 
-  // وظيفة التحميل المسبق للصورة
   const preloadImage = (url: string) => {
+    if (!url) return;
     setIsImageReady(false);
     const img = new Image();
     img.src = url;
     img.onload = () => setIsImageReady(true);
     img.onerror = () => {
       console.error("Failed to load image:", url);
-      setIsImageReady(true); // الاستمرار حتى لو فشل التحميل لتجنب التعليق
+      setIsImageReady(true);
     };
   };
+
+  // مراقبة تغيير المستوى أو الدخول لوضع اللعب لضمان تحميل الصورة
+  useEffect(() => {
+    if (isLoaded && gameState.view === 'playing') {
+      const currentLevel = LEVELS[gameState.currentLevelIdx];
+      if (currentLevel) {
+        preloadImage(currentLevel.image);
+      }
+    }
+  }, [isLoaded, gameState.view, gameState.currentLevelIdx]);
 
   const startLevel = useCallback(async (levelIdx: number) => {
     const targetLevel = LEVELS[levelIdx] || LEVELS[0];
@@ -128,7 +138,7 @@ const App: React.FC = () => {
   if (!isLoaded) return (
     <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center">
       <div className="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-      <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Initializing DB...</p>
+      <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Initializing...</p>
     </div>
   );
 
@@ -204,7 +214,7 @@ const App: React.FC = () => {
         {!isImageReady ? (
            <div className="flex flex-col items-center animate-pulse">
              <div className="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-             <p className="text-slate-500 font-bold text-xs">LOADING IMAGE...</p>
+             <p className="text-slate-500 font-bold text-xs tracking-widest uppercase">Fetching Image...</p>
            </div>
         ) : (
           <div className="relative">
