@@ -68,20 +68,20 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({
     setTargetIdx(null);
   };
 
-  // حساب حجم القطعة بناءً على حجم اللوحة الفعلي
+  // حجم القطعة بناءً على العرض المتاح
   const tileSize = boardRef.current ? boardRef.current.offsetWidth / gridSize : 100;
 
   return (
     <div 
       ref={boardRef}
-      className="grid bg-slate-900 p-1.5 rounded-2xl shadow-[0_35px_60px_-15px_rgba(0,0,0,0.5)] border-2 border-slate-800 select-none touch-none relative"
+      className="grid bg-slate-900 p-1 rounded-2xl shadow-[0_0_50px_rgba(0,0,0,0.6)] border-2 border-slate-800/50 select-none touch-none relative"
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       style={{
         gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
-        // قمنا بتكبير اللوحة لـ 650 بكسل كحد أقصى و 98% من عرض الشاشة
-        width: 'min(98vw, 650px)',
-        height: 'min(98vw, 650px)',
+        /* استخدام vh لضمان عدم خروج اللوحة عن ارتفاع الشاشة وتكبيرها لأقصى حد */
+        width: 'min(96vw, 75vh, 800px)',
+        height: 'min(96vw, 75vh, 800px)',
         gap: '0px'
       }}
     >
@@ -100,10 +100,10 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({
         />
       ))}
 
-      {/* قطعة السحب الطائرة مع تحسين الحواف والظل */}
+      {/* قطعة السحب الطائرة بحجم محسّن */}
       {draggedIdx !== null && (
         <div 
-          className="fixed pointer-events-none z-50 overflow-hidden border-4 border-indigo-400 shadow-[0_20px_50px_rgba(0,0,0,0.7)] scale-110 rounded-xl bg-slate-900"
+          className="fixed pointer-events-none z-50 overflow-hidden border-4 border-indigo-400 shadow-[0_30px_60px_rgba(0,0,0,0.8)] scale-110 rounded-xl bg-slate-900"
           style={{
             left: pointerPos.x - tileSize / 2,
             top: pointerPos.y - tileSize / 2,

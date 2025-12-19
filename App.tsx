@@ -23,12 +23,10 @@ const App: React.FC = () => {
   const [showHint, setShowHint] = useState(false);
   const timerRef = useRef<number | null>(null);
 
-  // تأمين الوصول للمستوى الحالي
   const level = LEVELS[gameState.currentLevelIdx] || LEVELS[0];
 
   useEffect(() => {
     const loadProgress = async () => {
-      // مؤقت أمان: لو تأخرت قاعدة البيانات لأكثر من ثانيتين، اظهر اللعبة على أي حال
       const safetyTimeout = setTimeout(() => {
         setIsLoaded(true);
       }, 2000);
@@ -36,8 +34,6 @@ const App: React.FC = () => {
       try {
         const completed = await getCompletedLevels();
         const lastPlayed = await getLastPlayedLevel();
-        
-        // التأكد من أن الفهرس ضمن نطاق مصفوفة المستويات
         const safeLastPlayed = (lastPlayed >= 0 && lastPlayed < LEVELS.length) ? lastPlayed : 0;
 
         setGameState(prev => ({ 
@@ -167,17 +163,6 @@ const App: React.FC = () => {
           >
             ALL LEVELS
           </button>
-          
-          <div className="flex gap-4">
-            <div className="flex-1 bg-slate-900/50 p-4 rounded-3xl border border-slate-800 text-center">
-               <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Total</div>
-               <div className="text-xl font-black text-white">{LEVELS.length}</div>
-            </div>
-            <div className="flex-1 bg-slate-900/50 p-4 rounded-3xl border border-slate-800 text-center">
-               <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-1">Completed</div>
-               <div className="text-xl font-black text-white">{gameState.unlockedLevels.length}</div>
-            </div>
-          </div>
         </div>
       </div>
     );
@@ -196,35 +181,33 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center p-4 md:p-8 bg-slate-950 text-slate-100">
+    <div className="h-screen flex flex-col items-center p-4 bg-slate-950 text-slate-100 overflow-hidden">
       {gameState.status === 'won' && <Fireworks />}
       
-      <header className="w-full max-w-2xl flex justify-between items-end mb-8">
+      {/* هيدر مضغوط لإعطاء مساحة أكبر للعبة */}
+      <header className="w-full max-w-2xl flex justify-between items-center mb-4 mt-2">
         <button 
           onClick={() => setGameState(prev => ({ ...prev, view: 'levels' }))}
-          className="group flex flex-col"
+          className="group flex items-center gap-3 bg-slate-900/50 px-4 py-2 rounded-2xl border border-slate-800"
         >
-          <div className="flex items-center gap-2 mb-1">
-            <svg className="w-4 h-4 text-indigo-500 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M15 19l-7-7 7-7"/></svg>
-            <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Back to levels</span>
-          </div>
-          <h1 className="text-2xl font-black italic tracking-tighter text-white">LEVEL {level.id}</h1>
+          <svg className="w-5 h-5 text-indigo-500 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M15 19l-7-7 7-7"/></svg>
+          <h1 className="text-xl font-black italic tracking-tighter text-white">LEVEL {level.id}</h1>
         </button>
         
         <div className="flex gap-2">
-          <div className="bg-slate-900/80 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-800/50 text-center min-w-[80px]">
-            <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-tight">Moves</span>
-            <span className="text-xl font-black text-white">{gameState.moves}</span>
+          <div className="bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-800/50 text-center min-w-[70px]">
+            <span className="block text-[8px] text-slate-500 font-bold uppercase">Moves</span>
+            <span className="text-lg font-black text-white">{gameState.moves}</span>
           </div>
-          <div className="bg-slate-900/80 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-800/50 text-center min-w-[80px]">
-            <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-tight">Time</span>
-            <span className="text-xl font-black text-white">{gameState.time}s</span>
+          <div className="bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-800/50 text-center min-w-[70px]">
+            <span className="block text-[8px] text-slate-500 font-bold uppercase">Time</span>
+            <span className="text-lg font-black text-white">{gameState.time}s</span>
           </div>
         </div>
       </header>
 
-      <main className="relative flex-1 flex flex-col items-center justify-center gap-8 w-full max-w-lg">
-        <div className="relative">
+      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl relative">
+        <div className="relative flex items-center justify-center w-full h-full">
           <PuzzleBoard
             tiles={gameState.tiles}
             gridSize={level.gridSize}
@@ -237,7 +220,7 @@ const App: React.FC = () => {
           {showHint && (
             <div className="absolute inset-0 z-40 rounded-3xl overflow-hidden shadow-2xl cursor-pointer" onClick={() => setShowHint(false)}>
               <img src={level.image} className="w-full h-full object-cover" alt="" />
-              <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px] flex items-center justify-center">
+              <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-[4px] flex items-center justify-center">
                 <div className="bg-indigo-600/90 text-white px-8 py-4 rounded-full font-black text-sm tracking-widest animate-pulse">TAP TO RESUME</div>
               </div>
             </div>
@@ -256,36 +239,39 @@ const App: React.FC = () => {
             </div>
           )}
         </div>
+      </main>
 
+      {/* منطقة التحكم السفلية */}
+      <footer className="w-full max-w-lg mt-4 mb-2">
         {gameState.status === 'won' ? (
           <div className="w-full animate-in slide-in-from-bottom-8 duration-500">
             <button
               onClick={goToNextLevel}
-              className="w-full bg-emerald-500 hover:bg-emerald-400 text-white py-6 rounded-3xl font-black text-xl shadow-2xl shadow-emerald-900/20 flex items-center justify-center gap-3 transition-all active:scale-95"
+              className="w-full bg-emerald-500 hover:bg-emerald-400 text-white py-5 rounded-3xl font-black text-xl shadow-2xl flex items-center justify-center gap-3 transition-all active:scale-95"
             >
               <span>NEXT LEVEL</span>
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
             </button>
           </div>
         ) : (
-          <div className="flex gap-4 w-full justify-center max-w-[420px]">
+          <div className="flex gap-3 w-full justify-center">
             <button
               onClick={() => setShowHint(true)}
-              className="flex-1 flex flex-col items-center justify-center gap-2 bg-slate-900/50 hover:bg-slate-800 text-white py-4 rounded-3xl transition-all border border-slate-800/50 shadow-xl"
+              className="flex-1 flex flex-col items-center justify-center gap-1 bg-slate-900/50 hover:bg-slate-800 text-white py-3 rounded-2xl transition-all border border-slate-800/50"
             >
-              <svg className="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">View Hint</span>
+              <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Hint</span>
             </button>
             <button
               onClick={() => startLevel(gameState.currentLevelIdx)}
-              className="flex-1 flex flex-col items-center justify-center gap-2 bg-slate-900/50 hover:bg-slate-800 text-white py-4 rounded-3xl transition-all border border-slate-800/50 shadow-xl"
+              className="flex-1 flex flex-col items-center justify-center gap-1 bg-slate-900/50 hover:bg-slate-800 text-white py-3 rounded-2xl transition-all border border-slate-800/50"
             >
-              <svg className="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
               <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Restart</span>
             </button>
           </div>
         )}
-      </main>
+      </footer>
     </div>
   );
 };
