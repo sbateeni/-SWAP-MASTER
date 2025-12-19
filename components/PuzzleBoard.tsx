@@ -73,14 +73,14 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({
   return (
     <div 
       ref={boardRef}
-      className="grid bg-slate-800 p-1.5 rounded-3xl shadow-[0_0_80px_rgba(0,0,0,0.8)] border-4 border-slate-700/50 select-none touch-none relative"
+      className="grid bg-slate-900 p-1 rounded-3xl shadow-[0_0_100px_rgba(0,0,0,0.8)] border-4 border-slate-800/80 select-none touch-none relative overflow-hidden"
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       style={{
         gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
-        width: 'min(94vw, 85vh, 700px)',
-        height: 'min(94vw, 85vh, 700px)',
-        gap: '2px'
+        width: 'min(96vw, 85vh, 750px)',
+        height: 'min(96vw, 85vh, 750px)',
+        gap: '0px' // إلغاء الفجوة لتتمكن القطع الصحيحة من الاندماج
       }}
     >
       {tiles.map((tile, index) => (

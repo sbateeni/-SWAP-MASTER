@@ -36,7 +36,7 @@ const Tile: React.FC<TileProps> = ({
     <div
       data-tile-index={index}
       onPointerDown={(e) => !disabled && onPointerDown(index, e)}
-      className={`relative select-none transition-all duration-300 ease-out bg-slate-800 ${
+      className={`relative select-none transition-all duration-300 ease-out bg-slate-900 ${
         isDragging ? 'opacity-0' : ''
       }`}
       style={{ 
@@ -45,22 +45,29 @@ const Tile: React.FC<TileProps> = ({
       }}
     >
       <div
-        className={`w-full h-full relative transition-all duration-500 overflow-hidden ${
-          isTarget ? 'ring-4 ring-indigo-500 ring-inset z-20 brightness-125 scale-95' : ''
-        } ${isCorrect ? '' : 'border-[0.5px] border-white/10'}`}
+        className={`w-full h-full relative transition-all duration-500 overflow-hidden 
+          ${isTarget ? 'ring-4 ring-indigo-500 ring-inset z-20 brightness-125 scale-95' : ''} 
+          ${isCorrect ? 'border-none' : 'border-[0.5px] border-white/10'}`}
         style={{
           backgroundImage: `url("${imageUrl}")`,
           backgroundSize: `${gridSize * 100}% ${gridSize * 100}%`,
           backgroundPosition: `${percentX}% ${percentY}%`,
-          backgroundRepeat: 'no-repeat'
+          backgroundRepeat: 'no-repeat',
+          // ضمان سلاسة الحواف عند الاندماج
+          boxSizing: 'border-box'
         }}
       >
+        {/* تأثير خفيف فقط للمربعات الصحيحة لزيادة العمق البصري */}
+        {isCorrect && !disabled && (
+          <div className="absolute inset-0 bg-white/5 opacity-0 hover:opacity-100 transition-opacity" />
+        )}
+
         {isTarget && (
           <div className="absolute inset-0 bg-indigo-500/10 animate-pulse" />
         )}
         
-        {showNumbers && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/20 text-white font-bold text-lg drop-shadow-md">
+        {showNumbers && !isCorrect && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30 text-white font-black text-xl drop-shadow-lg">
             {tile.originalIndex + 1}
           </div>
         )}
