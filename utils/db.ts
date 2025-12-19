@@ -28,7 +28,8 @@ export const saveProgress = async (completedLevelIdx: number): Promise<void> => 
     const transaction = db.transaction(STORE_NAME, 'readwrite');
     const store = transaction.objectStore(STORE_NAME);
     store.put(completed, 'completedLevels');
-    store.put(completedLevelIdx, 'lastPlayedLevelIdx');
+    // عند الفوز، نحدث آخر مستوى تم الوصول إليه ليكون المستوى التالي
+    store.put(completedLevelIdx + 1, 'lastPlayedLevelIdx');
     transaction.oncomplete = () => resolve();
     transaction.onerror = () => reject(transaction.error);
   });
