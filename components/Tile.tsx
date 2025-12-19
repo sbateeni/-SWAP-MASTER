@@ -29,8 +29,7 @@ const Tile: React.FC<TileProps> = ({
   const row = Math.floor(tile.originalIndex / gridSize);
   const col = tile.originalIndex % gridSize;
   
-  // نستخدم النسب المئوية لـ left و top لأنها تعتمد على حجم "الحاوية" (المربع)
-  // بينما transform: translate تعتمد على حجم "العنصر نفسه" (الصورة الكبيرة)
+  // الحساب المعتمد على الموقع الدقيق
   const leftOffset = -(col * 100);
   const topOffset = -(row * 100);
 
@@ -46,7 +45,7 @@ const Tile: React.FC<TileProps> = ({
       <div
         className={`w-full h-full relative transition-transform duration-500 ${
           isTarget ? 'ring-4 ring-indigo-500 ring-inset z-20 brightness-110' : ''
-        } ${isCorrect ? '' : 'border-[0.2px] border-white/5'}`}
+        } ${isCorrect ? '' : 'border-[0.2px] border-white/10'}`}
       >
         <img
           src={imageUrl}
@@ -57,6 +56,8 @@ const Tile: React.FC<TileProps> = ({
             height: `${gridSize * 100}%`,
             left: `${leftOffset}%`,
             top: `${topOffset}%`,
+            // إضافة تحسين للتدرج (rendering) لتبدو الصور حادة
+            imageRendering: 'auto'
           }}
         />
         
