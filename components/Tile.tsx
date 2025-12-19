@@ -29,8 +29,7 @@ const Tile: React.FC<TileProps> = ({
   const row = Math.floor(tile.originalIndex / gridSize);
   const col = tile.originalIndex % gridSize;
   
-  // حساب موقع الخلفية بدقة (0-100%)
-  // نستخدم (gridSize - 1) لأننا نوزع 100% على عدد الفجوات بين القطع
+  // حساب الموقع بنسبة مئوية دقيقة لتجنب الفراغات البيضاء
   const bgPosX = gridSize > 1 ? (col / (gridSize - 1)) * 100 : 0;
   const bgPosY = gridSize > 1 ? (row / (gridSize - 1)) * 100 : 0;
 
@@ -38,26 +37,26 @@ const Tile: React.FC<TileProps> = ({
     <div
       data-tile-index={index}
       onPointerDown={(e) => !disabled && onPointerDown(index, e)}
-      className={`relative select-none transition-all duration-300 ease-out flex items-center justify-center bg-slate-800 ${
+      className={`relative select-none transition-all duration-300 ease-out flex items-center justify-center bg-slate-900 ${
         isCorrect 
-          ? 'z-0 p-0 border-0' 
-          : 'z-10 p-[1px]' 
+          ? 'z-0 p-0' 
+          : 'z-10 p-[0.5px]' // تقليل الفجوة لأقل حد ممكن
       }`}
       style={{ touchAction: 'none' }}
     >
       <div
-        className={`w-full h-full transition-all duration-500 overflow-hidden shadow-sm bg-slate-800 ${
+        className={`w-full h-full transition-all duration-500 overflow-hidden ${
           isDragging 
-            ? 'opacity-20 grayscale scale-95' 
+            ? 'opacity-30 scale-95 shadow-2xl' 
             : isTarget 
-              ? 'ring-4 ring-indigo-500 ring-inset z-20 brightness-110' 
+              ? 'ring-2 ring-indigo-500 ring-inset z-20 brightness-125' 
               : isCorrect 
                 ? 'shadow-none' 
-                : 'rounded-sm border border-white/5 hover:border-indigo-500/50'
+                : 'rounded-sm shadow-sm'
         }`}
         style={{
           backgroundImage: `url('${imageUrl}')`,
-          backgroundSize: `${gridSize * 100}%`,
+          backgroundSize: `${gridSize * 100}% ${gridSize * 100}%`,
           backgroundPosition: `${bgPosX}% ${bgPosY}%`,
           backgroundRepeat: 'no-repeat'
         }}

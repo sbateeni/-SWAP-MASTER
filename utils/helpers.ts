@@ -2,7 +2,7 @@
 import { TileData } from '../types.ts';
 
 /**
- * خوارزمية خلط قوية جداً تضمن أن القطع مشتتة تماماً
+ * خوارزمية خلط تضمن أن القطع ليست في مكانها الصحيح
  */
 export const shuffleTiles = (gridSize: number): TileData[] => {
   const count = gridSize * gridSize;
@@ -10,7 +10,7 @@ export const shuffleTiles = (gridSize: number): TileData[] => {
   let isTooEasy = true;
   let attempts = 0;
 
-  while (isTooEasy && attempts < 20) {
+  while (isTooEasy && attempts < 25) {
     const freshTiles: TileData[] = Array.from({ length: count }, (_, i) => ({
       id: i,
       originalIndex: i,
@@ -23,13 +23,13 @@ export const shuffleTiles = (gridSize: number): TileData[] => {
       [freshTiles[i], freshTiles[j]] = [freshTiles[j], freshTiles[i]];
     }
 
-    // التحقق من أن عدد القطع الصحيحة قليل جداً
+    // التحقق من تشتيت القطع
     const correctCount = freshTiles.filter((t, idx) => t.originalIndex === idx).length;
     
-    // هدفنا: أقل من قطعتين في مكانهما الصحيح للشبكات الصغيرة، و 0 للشبكات الكبيرة
+    // في الشبكة 3x3 نقبل بقطعة واحدة كحد أقصى في مكانها، وفي الشبكات الأكبر 0
     const limit = gridSize <= 3 ? 1 : 0;
     
-    if (correctCount <= limit || attempts >= 19) {
+    if (correctCount <= limit || attempts >= 24) {
       tiles = freshTiles;
       isTooEasy = false;
     }
@@ -44,8 +44,8 @@ export const checkWin = (tiles: TileData[]): boolean => {
 };
 
 export const calculateStars = (moves: number, time: number, gridSize: number): number => {
-  const baseMoves = gridSize * gridSize * 2;
-  if (moves <= baseMoves && time < 45) return 3;
-  if (moves <= baseMoves * 2 && time < 90) return 2;
+  const baseMoves = gridSize * gridSize * 2.5;
+  if (moves <= baseMoves && time < 60) return 3;
+  if (moves <= baseMoves * 2 && time < 120) return 2;
   return 1;
 };
